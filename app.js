@@ -666,7 +666,7 @@ async function caricaIndice() {
 async function apriTourRemoto(cartella) {
   stato('Apertura del tour ' + cartella + '…');
   try {
-    const base = new URL('tours/' + encodeURIComponent(cartella) + '/', location.href);
+    const base = new URL('tours/' + encodeURIComponent(cartella) + '/', document.baseURI);
     const r = await fetch(new URL('tour.json', base), { cache: 'no-cache' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     importaTour(await r.json(), (f) => new URL(f.split('/').map(encodeURIComponent).join('/'), base).href);
