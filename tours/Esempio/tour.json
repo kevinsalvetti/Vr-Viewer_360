@@ -1,0 +1,16 @@
+{
+ "formato": "visualizzatore360-tour",
+ "versione": 2,
+ "nome": "Tour di esempio",
+ "layout": "auto",
+ "proiezione": "360",
+ "inizio": 1,
+ "scene": [
+  { "id": 1, "name": "Ingresso", "file": "ingresso.jpg", "yaw": 0,
+    "hot": [ { "d": [0.4924, -0.17365, -0.85287], "to": 2 }, { "d": [-0.96985, -0.17365, 0.17101], "to": 3 } ] },
+  { "id": 2, "name": "Soggiorno", "file": "soggiorno.jpg",
+    "hot": [ { "d": [-0.4924, -0.17365, 0.85287], "to": 1 }, { "d": [-0.85287, -0.17365, -0.4924], "to": 3 } ] },
+  { "id": 3, "name": "Terrazza", "file": "terrazza.jpg",
+    "hot": [ { "d": [0.96985, -0.17365, -0.17101], "to": 1 }, { "d": [0.85287, -0.17365, 0.4924], "to": 2 } ] }
+ ]
+}

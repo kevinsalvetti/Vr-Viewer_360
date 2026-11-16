@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>Visualizzatore 360 VR</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='none' stroke='%233d8bfd' stroke-width='6'/%3E%3Cellipse cx='32' cy='32' rx='12' ry='28' fill='none' stroke='%233d8bfd' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="errore" hidden>
+  Questo browser non supporta WebGL2. Usa una versione recente di Chrome, Edge, Firefox o del browser del Meta Quest.
+</div>
+
+<div id="vuoto" class="vuoto">
+  <h1>Visualizzatore 360°</h1>
+  <p>Panorami equirettangolari mono e stereo (Lumion Stereo Panorama) e tour con più scene, anche in VR sul Meta Quest.</p>
+
+  <section id="tourSez" class="tour-sez" hidden>
+    <h2>Tour disponibili</h2>
+    <div id="tourLista" class="tour-lista"></div>
+  </section>
+
+  <div class="vuoto-azioni">
+    <button id="vuotoApri" class="primario">Apri immagini…</button>
+    <button id="vuotoTour">Apri tour (.json + immagini)…</button>
+    <button id="vuotoProva">Scene di prova</button>
+  </div>
+  <p class="piccolo">Sul computer puoi anche trascinare qui le immagini.</p>
+</div>
+
+<header id="barra">
+  <button id="btnHome" title="Torna all'elenco dei tour">⌂ Tour</button>
+  <button id="btnApri" title="Apri immagini (O)">Apri</button>
+  <input id="file" type="file" accept="image/*,.json,application/json" multiple hidden>
+  <button id="btnScene" title="Pannello scene e collegamenti (P)">Scene</button>
+
+  <label>Layout stereo
+    <select id="layout">
+      <option value="auto">Automatico</option>
+      <option value="tb">Sopra/Sotto (Lumion)</option>
+      <option value="sbs">Affiancato (SBS)</option>
+      <option value="mono">Mono</option>
+    </select>
+  </label>
+
+  <label>Proiezione
+    <select id="proiezione">
+      <option value="360">360° equirettangolare</option>
+      <option value="180">180° (VR180)</option>
+    </select>
+  </label>
+
+  <label class="desk">Visualizzazione
+    <select id="vista">
+      <option value="mono">Singolo occhio</option>
+      <option value="anaglifo">Anaglifo rosso/ciano</option>
+      <option value="sbs">Affiancato (Cardboard / TV 3D)</option>
+    </select>
+  </label>
+
+  <label class="chk"><input type="checkbox" id="scambia"> Scambia occhi</label>
+  <label class="chk desk"><input type="checkbox" id="auto"> Rotazione auto</label>
+
+  <label class="desk">Zoom
+    <input type="range" id="fov" min="25" max="120" step="1" value="75">
+  </label>
+
+  <button id="btnCentra" title="Riporta la vista al centro (C)">Centra</button>
+  <button id="btnFull" class="desk" title="Schermo intero (F)">Schermo intero</button>
+  <button id="btnVR" class="vr" title="Avvia la sessione VR (visore)" disabled>Entra in VR</button>
+  <button id="btnProva" class="desk" title="Genera due scene stereo di prova">Prova</button>
+</header>
+
+<aside id="scene" hidden>
+  <div class="sc-testa"><b id="scTitolo">Scene del tour</b><button id="scAggiungi" class="modif">+ Immagini</button></div>
+  <ul id="scLista"></ul>
+  <label class="chk"><input type="checkbox" id="modifica"> Modifica collegamenti (E)</label>
+  <div class="solo-modifica">
+    <label class="chk"><input type="checkbox" id="ritorno" checked> Crea anche il ritorno</label>
+    <p class="hint">Clicca sulla vista per posizionare un punto e scegli la destinazione.
+       Clic su un punto esistente: opzioni (vai / elimina). ☆ = scena iniziale.</p>
+    <button id="scVista" title="Usa la direzione attuale come vista all'apertura della scena">Imposta vista iniziale</button>
+    <label class="campo">Nome del tour <input id="tourNome" type="text" placeholder="es. Villa Rossi" maxlength="80"></label>
+    <div class="riga">
+      <button id="scEsporta" class="primario" title="Scrive tour.json e le immagini in una cartella (Chrome / Edge)">Esporta tour…</button>
+      <button id="scSalva" title="Scarica solo tour.json">Salva .json</button>
+    </div>
+  </div>
+  <div class="riga"><button id="scCarica">Apri tour…</button></div>
+  <input id="fileTour" type="file" accept=".json,application/json,image/*" multiple hidden>
+</aside>
+<div id="tip" hidden></div>
+<div id="scegli" hidden></div>
+
+<button id="vrGrande" class="vr-grande" hidden>Entra in VR</button>
+
+<footer id="stato">Nessuna immagine caricata</footer>
+<div id="aiuto" hidden>
+  <b>Comandi</b><br>
+  Trascina: guarda attorno · Rotellina / pizzico: zoom<br>
+  Frecce: ruota · + / −: zoom · C: centra · F: schermo intero<br>
+  N / B: scena successiva / precedente · E: modifica collegamenti<br>
+  S: scambia occhi · V: cambia visualizzazione · H: nascondi barra · ?: aiuto<br>
+  <b>In VR</b>: grilletto o pizzico sul punto = vai · levetta ←/→ = ruota 30°<br>
+  A/X = scena successiva · B/Y = precedente
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

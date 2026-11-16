@@ -1,0 +1,9 @@
+{
+    "tour":  [
+                 {
+                     "cartella":  "Esempio",
+                     "nome":  "Tour di esempio",
+                     "scene":  3
+                 }
+             ]
+}

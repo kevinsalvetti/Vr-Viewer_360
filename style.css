@@ -1,0 +1,234 @@
+:root {
+  --bg: #0b0d10;
+  --pannello: rgba(18, 21, 26, .86);
+  --bordo: #2a313b;
+  --testo: #e6e9ee;
+  --testo-2: #9aa4b2;
+  --accento: #3d8bfd;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--testo);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+#gl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+#gl.trascina { cursor: grabbing; }
+
+#barra {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  padding: 10px 16px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  background: var(--pannello);
+  border-bottom: 1px solid var(--bordo);
+  backdrop-filter: blur(8px);
+  transition: opacity .25s, transform .25s;
+}
+
+body.nascondi #barra { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+body.nascondi #stato { opacity: 0; }
+body.nascondi { cursor: none; }
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--testo-2);
+  font-size: 12px;
+  white-space: nowrap;
+}
+label.chk { color: var(--testo); }
+
+select, button {
+  font: inherit;
+  color: var(--testo);
+  background: #1c222a;
+  border: 1px solid var(--bordo);
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+button { cursor: pointer; }
+button:hover:not(:disabled), select:hover { border-color: var(--accento); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button.primario { background: var(--accento); border-color: var(--accento); color: #fff; }
+input[type=range] { width: 110px; accent-color: var(--accento); }
+
+#stato {
+  position: fixed;
+  left: 16px; bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--pannello);
+  color: var(--testo-2);
+  font-size: 12px;
+  transition: opacity .25s;
+  max-width: calc(100% - 32px);
+  pointer-events: none;
+}
+
+#aiuto {
+  position: fixed;
+  right: 16px; bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  font-size: 12px;
+  color: var(--testo-2);
+}
+#aiuto b { color: var(--testo); }
+
+.vuoto {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none;
+  color: var(--testo-2);
+}
+.vuoto h1 { color: var(--testo); font-size: 26px; margin: 0 0 8px; font-weight: 600; }
+.vuoto-azioni { display: flex; gap: 10px; margin-top: 14px; pointer-events: auto; }
+.vuoto[hidden], #vuoto.nascosto { display: none; }
+
+body.trascinando::after {
+  content: "Rilascia l'immagine per aprirla";
+  position: fixed; inset: 12px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px dashed var(--accento);
+  border-radius: 14px;
+  background: rgba(61, 139, 253, .12);
+  font-size: 20px;
+  pointer-events: none;
+}
+
+#errore {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  padding: 24px; text-align: center; font-size: 16px;
+}
+#errore[hidden] { display: none; }
+
+#scene {
+  position: fixed;
+  left: 12px; top: 90px;
+  width: 270px;
+  max-height: calc(100% - 150px);
+  overflow: auto;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  backdrop-filter: blur(8px);
+  transition: opacity .25s;
+}
+#scene[hidden], #tip[hidden], #scegli[hidden] { display: none; }
+body.nascondi #scene { opacity: 0; pointer-events: none; }
+.sc-testa { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+#scLista { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+#scLista li { display: flex; gap: 4px; align-items: center; }
+#scLista li .nome { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#scLista li.cur .nome { border-color: var(--accento); background: rgba(61, 139, 253, .2); }
+#scLista li.manca .nome { color: #f0a050; }
+#scLista li .mini { padding: 4px 7px; }
+#scene .hint { font-size: 11px; color: var(--testo-2); margin: 6px 0; }
+#scene .riga { display: flex; gap: 6px; }
+#scene label.chk { margin: 4px 0; }
+#scLista:empty::after { content: "Nessuna scena: aggiungi una o più immagini."; color: var(--testo-2); font-size: 12px; }
+
+#tip {
+  position: fixed; z-index: 5;
+  padding: 3px 9px; border-radius: 6px;
+  background: rgba(0, 0, 0, .8); color: #fff; font-size: 12px;
+  pointer-events: none; white-space: nowrap;
+}
+#scegli {
+  position: fixed; z-index: 6;
+  min-width: 190px; max-width: 260px;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 8px; border-radius: 10px;
+  background: var(--pannello); border: 1px solid var(--accento);
+  backdrop-filter: blur(8px);
+}
+#scegli .t { font-size: 12px; color: var(--testo-2); padding: 0 2px 2px; }
+#scegli button { text-align: left; }
+
+@media (max-width: 700px) {
+  #barra { gap: 6px 10px; padding: 8px 10px; }
+  input[type=range] { width: 80px; }
+}
+
+/* ---- schermata iniziale: elenco dei tour pubblicati ---- */
+.vuoto p { max-width: 560px; }
+.vuoto .piccolo { font-size: 12px; margin-top: 14px; }
+.tour-sez { pointer-events: auto; margin: 10px 0 4px; width: min(720px, 100%); }
+.tour-sez h2 { font-size: 15px; font-weight: 600; color: var(--testo); margin: 0 0 10px; }
+.tour-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 46vh; overflow: auto; padding: 2px; }
+.tour-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  padding: 16px 18px; border-radius: 12px; text-align: left;
+  background: linear-gradient(160deg, #1f2833, #151a21);
+}
+.tour-card b { font-size: 17px; color: var(--testo); }
+.tour-card span { font-size: 12px; color: var(--testo-2); }
+.tour-card:hover { border-color: var(--accento); background: linear-gradient(160deg, #24344a, #172030); }
+
+/* ---- pulsanti VR ---- */
+button.vr:not(:disabled) { background: #1f7a4f; border-color: #2a9d66; color: #fff; }
+.vr-grande {
+  position: fixed; right: 16px; bottom: 12px; z-index: 4;
+  padding: 14px 26px; font-size: 18px; font-weight: 600; border-radius: 12px;
+  background: #1f7a4f; border-color: #2a9d66; color: #fff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+}
+.vr-grande[hidden] { display: none; }
+body.nascondi .vr-grande { opacity: 0; pointer-events: none; }
+
+/* ---- pannello scene: strumenti di modifica visibili solo in modifica ---- */
+.solo-modifica { display: none; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+body.modifica .solo-modifica { display: flex; }
+#scLista li .mini.modif { display: none; }
+body.modifica #scLista li .mini.modif { display: inline-block; }
+#scLista li .stella { color: var(--testo-2); }
+#scLista li .stella.on { color: #ffc233; }
+body:not(.modifica) #scLista li .stella:not(.on) { visibility: hidden; }
+label.campo { flex-direction: column; align-items: stretch; gap: 3px; white-space: normal; }
+label.campo input {
+  font: inherit; color: var(--testo); background: #1c222a;
+  border: 1px solid var(--bordo); border-radius: 6px; padding: 5px 8px;
+}
+#scene .riga { margin-top: 4px; flex-wrap: wrap; }
+#scegli button.pericolo { color: #ff8a80; }
+#scegli button.annulla { color: var(--testo-2); }
+
+/* ---- Meta Quest (browser 2D): comandi più grandi, niente opzioni solo-desktop ---- */
+body.quest { font-size: 16px; }
+body.quest .desk { display: none; }
+body.quest button, body.quest select { padding: 9px 14px; font-size: 16px; }
+body.quest label { font-size: 14px; }
+body.quest #scene { width: 340px; }
+body.quest #aiuto { font-size: 14px; }
